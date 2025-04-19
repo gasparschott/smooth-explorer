@@ -54,7 +54,7 @@ class SmoothExplorer extends obsidian.Plugin {
 			}
 			this.app.commands.executeCommandById('file-explorer:open');
 			workspace.setActiveLeaf(workspace.getLeavesOfType('file-explorer')[0],{focus:true});
-			sleep(100).then( () => {																								// fallback for pdfs and files that take longer to open
+			sleep(500).then( () => {																								// fallback for pdfs and files that take longer to open
 				workspace.setActiveLeaf(workspace.getLeavesOfType('file-explorer')[0],{focus:true});
 			});
 		}
