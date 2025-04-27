@@ -24,6 +24,9 @@ class SmoothExplorer extends obsidian.Plugin {
 			let select_this = ( focused_item ? focused_item : active_dom ? active_dom : null );
 			let dupe = workspace.getMostRecentLeaf().parent.children.find( leaf => leaf.view.file === focused_item?.file );
 			tree.clearSelectedDoms();
+			if ( focused_item === null && /ArrowUp|ArrowDown/.test(e.key) && e.altKey ) { 													// focus items @ initial startup with first arrow keypress
+				active_dom !== null ? tree.setFocusedItem(active_dom) : e.key === 'ArrowDown' ? tree.setFocusedItem(tree.root.vChildren.first()) : e.key === 'ArrowUp' ? tree.setFocusedItem(tree.root.vChildren.last()) : null;
+			}
 			switch(true) {
 				case !select_this: case !focused_item:																				break;
 				case e.altKey && !(e.key === 'Enter'):																						// navigate without opening file
@@ -54,8 +57,9 @@ class SmoothExplorer extends obsidian.Plugin {
 			}
 			this.app.commands.executeCommandById('file-explorer:open');
 			workspace.setActiveLeaf(workspace.getLeavesOfType('file-explorer')[0],{focus:true});
-			sleep(500).then( () => {																								// fallback for pdfs and files that take longer to open
-				workspace.setActiveLeaf(workspace.getLeavesOfType('file-explorer')[0],{focus:true});
+			sleep(100).then( () => {																								// fallback for pdfs and files that take longer to open
+				if ( workspace.getActiveViewOfType(obsidian.View).getViewType() !== 'file-explorer' )
+					{ workspace.setActiveLeaf(workspace.getLeavesOfType('file-explorer')[0],{focus:true}); }
 			});
 		}
 		this.registerDomEvent(window,'mouseup', (e) => { 
