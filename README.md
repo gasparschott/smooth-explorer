@@ -7,8 +7,8 @@ This is a relatively simple plugin for Obsidian that allows you to browse or nav
 #### File Explorer Navigation:  
 • `ArrowUp/ArrowDown`: Navigate up and down the file explorer, opening the selected File Explorer item in the most recently active leaf with no further keystrokes needed.  
 • `ArrowUp/ArrowDown + Shift`: Open the selected File Explorer item in a new tab.  
-• `ArrowUp/ArrowDown + Alt/Opt`: Navigate the file explorer without opening files. After Obsidian startup, with the File Explorer open but no item focused, use these key combos to focus the active file, if any, or the first or last item.
-• `Alt/Opt + Enter`: Open the currently focused File Explorer item in the most recently active tab. 
+• `ArrowUp/ArrowDown + Alt/Opt`: Navigate the file explorer without opening files. After Obsidian startup, with the File Explorer open but no item focused, use these key combos to focus the active file, if any, or the first or last item.   
+• `Alt/Opt + Enter`: Open the currently focused File Explorer item in the most recently active tab.  
 • `ArrowUp/ArrowDown + Alt/Opt`: Navigate the file explorer without opening files.  
 • `Alt/Opt + Enter`: Open the currently focused File Explorer item in the most recently active tab.  
 • `Alt/Opt + Shift + Enter`: Open the currently focused File Explorer item in a new tab.
