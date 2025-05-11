@@ -15,5 +15,5 @@ This is a relatively simple plugin for Obsidian that allows you to browse or nav
 
 #### Other Notes:
 • Already open files will not be duplicated.  
-• Folders are ignored, but if you are using a folder index plugin of some sort (i.e., if the folder includes a file named "index.md" or has the same name as the folder itself), the index file will be loaded.  
+• Folders are ignored, but if  the folder includes a file named "index.md" or one that has the same name as the folder itself, that file will be loaded.  
 

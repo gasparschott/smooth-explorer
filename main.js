@@ -19,7 +19,7 @@ class SmoothExplorer extends obsidian.Plugin {
 		const fileExplorerArrowNavigation = (e) => {
 			let tree = getFileExplorers()[0].view.tree;
 			if ( !tree || e.target.classList.contains('is-being-renamed') ) { return; }
-			let active_dom = tree.view.activeDom, new_leaf;
+			let active_dom = tree.view.activeDom, new_leaf, index;
 			let focused_item = tree.focusedItem, focused_file = focused_item?.file;
 			let select_this = ( focused_item ? focused_item : active_dom ? active_dom : null );
 			let dupe = workspace.getMostRecentLeaf().parent.children.find( leaf => leaf.view.file === focused_item?.file );
@@ -37,7 +37,8 @@ class SmoothExplorer extends obsidian.Plugin {
 					tree.selectItem(tree.focusedItem);																				return;
 				case this.app.vault.getFolderByPath(select_this.file.path) instanceof obsidian.TFolder:
 					tree.setFocusedItem(select_this,{scrollIntoView:true});
-					break;
+					index = tree.focusedItem?.file?.children?.find( item => ( (/index/.test(item.basename) || item.basename === item.parent.name) && /md/.test(item.extension) ) ); // find index file
+					if (index) { workspace.getActiveFileView(obsidian.FileView)?.leaf?.openFile(index,{active:true}); };			break;
 				case this.app.vault.getFileByPath(focused_item.file.path) instanceof obsidian.TFile:
 					switch(true) {
 						case workspace.getActiveFileView(obsidian.FileView) === null:
@@ -46,7 +47,7 @@ class SmoothExplorer extends obsidian.Plugin {
 						case e.shiftKey && e.altKey && e.key === 'Enter' && !dupe:															// open on alt-Enter
 							new_leaf = workspace.getLeaf('tab');																			// 
 							new_leaf.openFile(focused_file,{active:true});															break;	// open item in new tab
-						case e.altKey && e.key === 'Enter' && !dupe:
+						case e.altKey && e.key === 'Enter' && !dupe:																		// alt+enter and no dupe
 						case !e.shiftKey && !dupe: 																							// arrowKey only and no dupe
 							workspace.getActiveFileView(obsidian.FileView)?.leaf?.openFile(focused_file,{active:true}); 			break;	// open item in recently active tab
 						case dupe !== undefined:
@@ -55,11 +56,11 @@ class SmoothExplorer extends obsidian.Plugin {
 					workspace.setActiveLeaf(tree.leaf,{focus:true});																		// refocus file explorer
 					break;
 			}
-			this.app.commands.executeCommandById('file-explorer:open');
-			workspace.setActiveLeaf(workspace.getLeavesOfType('file-explorer')[0],{focus:true});
+			this.app.commands.executeCommandById('file-explorer:open');																// show file explorer
+			workspace.setActiveLeaf(workspace.getLeavesOfType('file-explorer')[0],{focus:true});									// refocus file explorer
 			sleep(100).then( () => {																								// fallback for pdfs and files that take longer to open
 				if ( workspace.getActiveViewOfType(obsidian.View).getViewType() !== 'file-explorer' )
-					{ workspace.setActiveLeaf(workspace.getLeavesOfType('file-explorer')[0],{focus:true}); }
+					{ workspace.setActiveLeaf(workspace.getLeavesOfType('file-explorer')[0],{focus:true}); }						// refocus file explorer
 			});
 		}
 		this.registerDomEvent(window,'mouseup', (e) => { 
