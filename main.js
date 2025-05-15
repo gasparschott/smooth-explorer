@@ -35,10 +35,16 @@ class SmoothExplorer extends obsidian.Plugin {
 						case e.key === 'ArrowDown':		tree.changeFocusedItem("forwards");											break;
 					}
 					tree.selectItem(tree.focusedItem);																				return;
-				case this.app.vault.getFolderByPath(select_this.file.path) instanceof obsidian.TFolder:
+				case this.app.vault.getFolderByPath(select_this.file.path) instanceof obsidian.TFolder:										// directories
 					tree.setFocusedItem(select_this,{scrollIntoView:true});
 					index = tree.focusedItem?.file?.children?.find( item => ( (/index/.test(item.basename) || item.basename === item.parent.name) && /md/.test(item.extension) ) ); // find index file
-					if (index) { workspace.getActiveFileView(obsidian.FileView)?.leaf?.openFile(index,{active:true}); };			break;
+					if (index) { 
+						if ( workspace.getActiveFileView(obsidian.FileView) === null ) {
+							workspace.getLeaf().openFile(index,{active:true});																// open new leaf if no file open
+						} else {
+							workspace.getActiveFileView(obsidian.FileView)?.leaf?.openFile(index,{active:true});							// else open file in active leaf
+						}
+					};			break;
 				case this.app.vault.getFileByPath(focused_item.file.path) instanceof obsidian.TFile:
 					switch(true) {
 						case workspace.getActiveFileView(obsidian.FileView) === null:
