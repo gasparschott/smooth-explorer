@@ -18,9 +18,9 @@ class SmoothExplorer extends obsidian.Plugin {
 			return index_file;
 		}
 		const fileExplorerArrowNavigation = (e) => {
+			e.preventDefault();
 			let tree = getFileExplorers()[0].view.tree;
 			if ( !tree || e.target.classList.contains('is-being-renamed') ) { return; }
-			e.preventDefault();
 			let active_dom = tree.view.activeDom, new_leaf, index;
 			let focused_item = tree.focusedItem, focused_file = focused_item?.file;
 			let select_this = ( focused_item ? focused_item : active_dom ? active_dom : null );
@@ -29,8 +29,10 @@ class SmoothExplorer extends obsidian.Plugin {
 			if ( focused_item === null && /ArrowUp|ArrowDown/.test(e.key) && e.altKey ) { 													// focus items @ initial startup with first arrow keypress
 				active_dom !== null ? tree.setFocusedItem(active_dom) : e.key === 'ArrowDown' ? tree.setFocusedItem(tree.root.vChildren.first()) : e.key === 'ArrowUp' ? tree.setFocusedItem(tree.root.vChildren.last()) : null;
 			}
+console.log(workspace.getActiveViewOfType(obsidian.View).leaf)
 			switch(true) {
-				case !select_this: case !focused_item:																				break;
+				case !select_this: case !focused_item:	console.log("1");
+																			break;
 				case e.altKey && !(e.key === 'Enter'):																						// navigate without opening file
 					switch(true) {
 						case e.key === 'ArrowUp':		tree.changeFocusedItem("backwards");										break;
@@ -52,6 +54,8 @@ class SmoothExplorer extends obsidian.Plugin {
 					};																												break;
 				case this.app.vault.getFileByPath(focused_item.file.path) instanceof obsidian.TFile:
 					switch(true) {
+						case workspace.getActiveFileView()?.leaf.pinned === true:														// active leaf is pinned
+						case workspace.getActiveFileView()?.leaf?.containerEl.closest('.mod-root') === null:							// active leaf in sidebar
 						case workspace.getActiveFileView(obsidian.FileView) === null:
 							workspace.getLeaf().openFile(focused_file,{active:true});												break;	// active leaf is empty
 						case e.shiftKey && !dupe: 																							// open on shiftKey and no dupes
