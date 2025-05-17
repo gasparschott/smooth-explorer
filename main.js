@@ -11,6 +11,7 @@ class SmoothExplorer extends obsidian.Plugin {
 		// await this.loadSettings();
 		const workspace = this.app.workspace;
 		const getFileExplorers = () => workspace.getLeavesOfType('file-explorer');
+		const getActiveRootLeaf = () =>			{ return workspace.iterateRootLeaves( child => child.tabHeaderEl?.className?.includes('active')) ?? workspace.rootSplit.children?.[0]; }
 		const getIndexFile = (focused_item) => {															// get folder index file; basename must be "index" or same as parent folder
 			let children = focused_item.file.children;
 			let index_file = children.find(child => child.basename === ('index' || child.parent.name) );
@@ -19,6 +20,7 @@ class SmoothExplorer extends obsidian.Plugin {
 		const fileExplorerArrowNavigation = (e) => {
 			let tree = getFileExplorers()[0].view.tree;
 			if ( !tree || e.target.classList.contains('is-being-renamed') ) { return; }
+			e.preventDefault();
 			let active_dom = tree.view.activeDom, new_leaf, index;
 			let focused_item = tree.focusedItem, focused_file = focused_item?.file;
 			let select_this = ( focused_item ? focused_item : active_dom ? active_dom : null );
@@ -39,12 +41,15 @@ class SmoothExplorer extends obsidian.Plugin {
 					tree.setFocusedItem(select_this,{scrollIntoView:true});
 					index = tree.focusedItem?.file?.children?.find( item => ( (/index/.test(item.basename) || item.basename === item.parent.name) && /md/.test(item.extension) ) ); // find index file
 					if (index) { 
-						if ( workspace.getActiveFileView(obsidian.FileView) === null ) {
-							workspace.getLeaf().openFile(index,{active:true});																// open new leaf if no file open
-						} else {
-							workspace.getActiveFileView(obsidian.FileView)?.leaf?.openFile(index,{active:true});							// else open file in active leaf
+						switch(true) {
+							case workspace.getActiveFileView()?.leaf.pinned === true:														// active leaf is pinned
+							case workspace.getActiveFileView()?.leaf?.containerEl.closest('.mod-root') === null:							// active leaf in sidebar
+							case workspace.getActiveFileView(obsidian.FileView) === null:													// active leaf is empty
+								workspace.getLeaf().openFile(index,{active:true});													break;	// open new leaf
+							default:
+								workspace.getActiveFileView(obsidian.FileView)?.leaf?.openFile(index,{active:true});						// else open file in active leaf
 						}
-					};			break;
+					};																												break;
 				case this.app.vault.getFileByPath(focused_item.file.path) instanceof obsidian.TFile:
 					switch(true) {
 						case workspace.getActiveFileView(obsidian.FileView) === null:
@@ -87,7 +92,7 @@ class SmoothExplorer extends obsidian.Plugin {
 			}
 		});	
 		this.registerDomEvent(document,'keyup', (e) => {
-			if ( e.altKey && e.key === 'Enter' && workspace.getActiveViewOfType(obsidian.View).getViewType() === 'file-explorer' ) { 
+			if ( e.altKey && e.key === 'Enter' && workspace.getActiveViewOfType(obsidian.View)?.getViewType() === 'file-explorer' ) { 
 				fileExplorerArrowNavigation(e);
 			}
 		});	
