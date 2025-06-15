@@ -14,6 +14,7 @@ This is a relatively simple plugin for Obsidian that allows you to browse or nav
 (Note: `Command/Control + Enter` is the default key combo for opening File Explorer items in Obsidian, however opening items this way will bypass the plugin's features, such as preventing duplicated leaves and preserving the focus on the File Explorer.)
 
 #### Other Notes:
+• This plugin requires that the core "Files" plugin be enabled.  
 • Already open files will not be duplicated.  
-• Folders are ignored, but if  the folder includes a file named "index.md" or one that has the same name as the folder itself, that file will be loaded.  
+• Folders are ignored, but if the folder includes a file named "index.md" or one that has the same name as the folder itself, that file will be loaded.  
 

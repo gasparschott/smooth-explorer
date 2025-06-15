@@ -1,9 +1,6 @@
 'use strict';
 
 let obsidian = require('obsidian');
-let DEFAULT_SETTINGS = {
-	'keyboard_shortcuts': []
-};
 
 class SmoothExplorer extends obsidian.Plugin {
     async onload() {
@@ -11,14 +8,9 @@ class SmoothExplorer extends obsidian.Plugin {
 		// await this.loadSettings();
 		const workspace = this.app.workspace;
 		const getFileExplorers = () => workspace.getLeavesOfType('file-explorer');
-		const getActiveRootLeaf = () =>			{ return workspace.iterateRootLeaves( child => child.tabHeaderEl?.className?.includes('active')) ?? workspace.rootSplit.children?.[0]; }
-		const getIndexFile = (focused_item) => {															// get folder index file; basename must be "index" or same as parent folder
-			let children = focused_item.file.children;
-			let index_file = children.find(child => child.basename === ('index' || child.parent.name) );
-			return index_file;
-		}
 		const fileExplorerArrowNavigation = (e) => {
 			e.preventDefault();
+			if ( workspace.app.internalPlugins.getPluginById('file-explorer').enabled === false ) { return; }								// return if Files plugin disabled
 			let tree = getFileExplorers()[0].view.tree;
 			if ( !tree || e.target.classList.contains('is-being-renamed') ) { return; }
 			let active_dom = tree.view.activeDom, new_leaf, index;
@@ -26,13 +18,11 @@ class SmoothExplorer extends obsidian.Plugin {
 			let select_this = ( focused_item ? focused_item : active_dom ? active_dom : null );
 			let dupe = workspace.getMostRecentLeaf().parent.children.find( leaf => leaf.view.file === focused_item?.file );
 			tree.clearSelectedDoms();
-			if ( focused_item === null && /ArrowUp|ArrowDown/.test(e.key) && e.altKey ) { 													// focus items @ initial startup with first arrow keypress
+			if ( focused_item === null && /ArrowUp|ArrowDown/.test(e.key) && !e.altKey ) { 													// focus items @ initial startup with first arrow keypress
 				active_dom !== null ? tree.setFocusedItem(active_dom) : e.key === 'ArrowDown' ? tree.setFocusedItem(tree.root.vChildren.first()) : e.key === 'ArrowUp' ? tree.setFocusedItem(tree.root.vChildren.last()) : null;
 			}
-console.log(workspace.getActiveViewOfType(obsidian.View).leaf)
 			switch(true) {
-				case !select_this: case !focused_item:	console.log("1");
-																			break;
+				case !select_this: case !focused_item:																				break;
 				case e.altKey && !(e.key === 'Enter'):																						// navigate without opening file
 					switch(true) {
 						case e.key === 'ArrowUp':		tree.changeFocusedItem("backwards");										break;
@@ -54,8 +44,8 @@ console.log(workspace.getActiveViewOfType(obsidian.View).leaf)
 					};																												break;
 				case this.app.vault.getFileByPath(focused_item.file.path) instanceof obsidian.TFile:
 					switch(true) {
-						case workspace.getActiveFileView()?.leaf.pinned === true:														// active leaf is pinned
-						case workspace.getActiveFileView()?.leaf?.containerEl.closest('.mod-root') === null:							// active leaf in sidebar
+						case workspace.getActiveFileView()?.leaf.pinned === true:															// active leaf is pinned
+						case workspace.getActiveFileView()?.leaf?.containerEl.closest('.mod-root') === null:								// active leaf in sidebar
 						case workspace.getActiveFileView(obsidian.FileView) === null:
 							workspace.getLeaf().openFile(focused_file,{active:true});												break;	// active leaf is empty
 						case e.shiftKey && !dupe: 																							// open on shiftKey and no dupes
@@ -71,15 +61,16 @@ console.log(workspace.getActiveViewOfType(obsidian.View).leaf)
 					workspace.setActiveLeaf(tree.leaf,{focus:true});																		// refocus file explorer
 					break;
 			}
-			this.app.commands.executeCommandById('file-explorer:open');																// show file explorer
-			workspace.setActiveLeaf(workspace.getLeavesOfType('file-explorer')[0],{focus:true});									// refocus file explorer
-			sleep(100).then( () => {																								// fallback for pdfs and files that take longer to open
+			this.app.commands.executeCommandById('file-explorer:open');																		// show file explorer
+			workspace.setActiveLeaf(workspace.getLeavesOfType('file-explorer')[0],{focus:true});											// refocus file explorer
+			sleep(100).then( () => {																										// fallback for pdfs and files that take longer to open
 				if ( workspace.getActiveViewOfType(obsidian.View).getViewType() !== 'file-explorer' )
-					{ workspace.setActiveLeaf(workspace.getLeavesOfType('file-explorer')[0],{focus:true}); }						// refocus file explorer
+					{ workspace.setActiveLeaf(workspace.getLeavesOfType('file-explorer')[0],{focus:true}); }								// refocus file explorer
 			});
 		}
 		this.registerDomEvent(window,'mouseup', (e) => { 
 			if ( e.target.closest('.tree-item') ) {
+				if ( workspace.app.internalPlugins.getPluginById('file-explorer').enabled === false ) { return; }							// return if Files plugin disabled
 				let explorer = workspace.getLeavesOfType('file-explorer')[0], tree = explorer.view.tree;
 				sleep(100).then( () => {
 					workspace.activeEditor?.editor?.blur();
