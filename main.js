@@ -2,7 +2,7 @@
 
 let obsidian = require('obsidian');
 let DEFAULT_SETTINGS = {
-	'reveal_active_file_in_explorer': 		true
+	'disable_reveal_active_file_in_explorer': 		false
 }
 class SmoothExplorer extends obsidian.Plugin {
     async onload() {
@@ -80,11 +80,11 @@ class SmoothExplorer extends obsidian.Plugin {
 		this.registerEvent(
 			this.app.workspace.on('active-leaf-change', (e) => {
 				if ( workspace.getActiveViewOfType(obsidian.View).getViewType() === 'file-explorer' ) {
-					if ( this.settings.reveal_active_file_in_explorer === false ) { 
+					if ( this.settings.disable_reveal_active_file_in_explorer === true ) { 
 						return; 
 					} else { 
-						this.app.commands.executeCommandById('file-explorer:reveal-active-file'); 
-					}			// reveal active file on file explorer becoming active
+						this.app.commands.executeCommandById('file-explorer:reveal-active-file'); 			// reveal active file on file explorer becoming active
+					}
 					let tree = workspace.getLeavesOfType('file-explorer')[0].view.tree;
 					tree.setFocusedItem(tree?.view?.activeDom);												// focus the active file explorer item
 				}
@@ -115,9 +115,9 @@ let SmoothExplorerSettings = class extends obsidian.PluginSettingTab {
 		containerEl.empty();
         containerEl.createEl("h1", {}, (el) => {el.innerHTML = 'Smooth Explorer'; });
 		new obsidian.Setting(containerEl).setName('Disable reveal active file in File Explorer').setDesc('Prevents revealing the active item when the File Explorer becomes active.')
-			.addToggle( A => A.setValue(this.plugin.settings.reveal_active_file_in_explorer)
+			.addToggle( A => A.setValue(this.plugin.settings.disable_reveal_active_file_in_explorer)
 			.onChange(async (value) => {
-				this.plugin.settings.reveal_active_file_in_explorer = value;
+				this.plugin.settings.disable_reveal_active_file_in_explorer = value;
 				await this.plugin.saveSettings();
 		}));
 	}
