@@ -17,5 +17,5 @@ This is a relatively simple plugin for Obsidian that allows you to browse or nav
 • This plugin requires that the core "Files" plugin be enabled.  
 • Already open files will not be duplicated when navigating the File Explorer.  
 • Folders are ignored, but if the folder includes a file named "index.md" or one that has the same name as the folder itself, that file will be loaded.  
-• By default, the active file in the File Explorer is revealed when the File Explorer becomes active. This behavior can be disabled in the settings.
+• By default, the active file in the File Explorer is revealed when the File Explorer becomes active. This behavior can be disabled in the settings.  
 • This plugin works well with my “[Smooth Navigator](https://github.com/gasparschott/smooth-navigator/)” plugin, which allows you to assign keyboard shortcuts to navigate or cycle through open leaves and tab groups, but it is not required.
