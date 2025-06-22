@@ -1,7 +1,7 @@
 {
 	"id": "smooth-explorer",
 	"name": "Smooth Explorer",
-	"version": "1.0.7",
+	"version": "1.0.8",
 	"minAppVersion": "1.0.0",
 	"description": "Smoothly browse the file explorer with arrow keys, opening files as they are selected.",
 	"author": "Michael Schrauzer",
