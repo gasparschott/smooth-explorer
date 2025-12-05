@@ -1,11 +1,11 @@
 {
 	"id": "smooth-explorer",
 	"name": "Smooth Explorer",
-	"version": "1.0.9",
+	"version": "1.0.9_1",
 	"minAppVersion": "1.0.0",
 	"description": "Smoothly browse the file explorer with arrow keys, opening files as they are selected.",
 	"author": "Michael Schrauzer",
 	"authorURL": "gasparschott/smooth-explorer",
 	"fundingUrl": "https://www.buymeacoffee.com/fiLtliTFxQ",
-	"isDesktopOnly": true
+	"isDesktopOnly": false
 }

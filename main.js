@@ -129,7 +129,6 @@ let SmoothExplorerSettings = class extends obsidian.PluginSettingTab {
 	display() {
 		const { containerEl } = this;
 		containerEl.empty();
-        containerEl.createEl("h1", {}, (el) => {el.innerHTML = 'Smooth Explorer'; });
 		new obsidian.Setting(containerEl).setName('Disable reveal active file in File Explorer').setDesc('Prevents revealing the active item when the File Explorer becomes active.')
 			.addToggle( A => A.setValue(this.plugin.settings.disable_reveal_active_file_in_explorer)
 			.onChange(async (value) => {
